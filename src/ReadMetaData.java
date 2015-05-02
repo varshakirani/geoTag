@@ -28,9 +28,11 @@ public class ReadMetaData {
 		URL u = getURL(strURL);
 		InputStream in = getInputStream(u);
 		Metadata metadata;
+		boolean hasGeoDetails = false;
+		JSONObject ret = new JSONObject();
 		try {
 			metadata = ImageMetadataReader.readMetadata(in);
-//			print(metadata);
+			//			print(metadata);
 			/*
 			 conversion of coordinates into decimal 
 			 */
@@ -57,15 +59,22 @@ public class ReadMetaData {
 			}
 			Map<String,Double> corMap = new HashMap<String,Double>();
 			double decLon = 0, decLat = 0;
+			
+			if(lon == null || lat == null){
+				hasGeoDetails = false;
+				return ret;
+			}
+			if(hasGeoDetails){
 			decLon = cordinatesToDecimal(lon);
 			decLat = cordinatesToDecimal(lat);
 
 			corMap.put("Longitude", decLon);
 			corMap.put("Latitude", decLat);
 
-			JSONObject ret = getLocationInfo(decLat,decLon);
+			ret = getLocationInfo(decLat,decLon);
 			return ret;
-		
+
+			}
 		} catch (ImageProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,16 +82,21 @@ public class ReadMetaData {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return ret;
 	}
 	public static void main(String[] args) {
 
 		URL u = getURL("https://www.drupal.org/files/IMG_4692.jpg");
 		InputStream in = getInputStream(u);
 		Metadata metadata;
+//		System.out.println(getGeoTag("http://4.bp.blogspot.com/-JOqxgp-ZWe0/U3BtyEQlEiI/AAAAAAAAOfg/Doq6Q2MwIKA/s1600/google-logo-874x288.png"));
+//		System.out.println(getGeoTag("http://stackoverflow.com/questions/26691771/java-catch-exception-empty-string"));
+//		System.out.println(getGeoTag("https://pbs.twimg.com/profile_images/522909800191901697/FHCGSQg0.png"));
+//		System.out.println(getGeoTag("https://support.ggle.com/webmasters/answer/2409439?hl=en"));
+		boolean hasGeoDetails = true;
 		try {
 			metadata = ImageMetadataReader.readMetadata(in);
-//			print(metadata);
+			//			print(metadata);
 
 			/*
 			 conversion of coordinates into decimal 
@@ -97,11 +111,11 @@ public class ReadMetaData {
 					}
 
 					if(tag.getTagName().equals("GPS Latitude")) {
-//						System.out.println(tag.getDescription());
+						//						System.out.println(tag.getDescription());
 						lat = tag.getDescription();
 					}
 					else if(tag.getTagName().equals("GPS Longitude")) {
-//						System.out.println(tag.getDescription());
+						//						System.out.println(tag.getDescription());
 						lon = tag.getDescription();
 					}
 				}
@@ -112,22 +126,30 @@ public class ReadMetaData {
 					}
 				}
 			}
+
 			Map<String,Double> corMap = new HashMap<String,Double>();
 			double decLon = 0, decLat = 0;
-			decLon = cordinatesToDecimal(lon);
-			decLat = cordinatesToDecimal(lat);
+			JSONObject ret = new JSONObject();
+			if(lon == null || lat == null){
+				hasGeoDetails = false;
+				//				return ret;
+			}
+			if(hasGeoDetails){
+				decLon = cordinatesToDecimal(lon);
+				decLat = cordinatesToDecimal(lat);
 
-			corMap.put("Longitude", decLon);
-			corMap.put("Latitude", decLat);
-//			System.out.println(corMap);
+				corMap.put("Longitude", decLon);
+				corMap.put("Latitude", decLat);
+			}
+			//			System.out.println(corMap);
 
-			JSONObject ret = getLocationInfo(decLat,decLon);
-//			JSONObject location;
-//			String location_string;
-//			System.out.println(ret);
+			ret = getLocationInfo(decLat,decLon);
+			//			JSONObject location;
+			//			String location_string;
+			//			System.out.println(ret);
 			try {
 				//Get JSON Array called "results" and then get the 0th complete object as JSON        
-//				location = ret.getJSONArray("results").getJSONObject(0); 
+				//				location = ret.getJSONArray("results").getJSONObject(0); 
 				// Get the value of the attribute whose name is "formatted_string"
 				//			    location_string = location.getString("formatted_address");
 				//			    System.out.println("test formattted address:" + location_string);
