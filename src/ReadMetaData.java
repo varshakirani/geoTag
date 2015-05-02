@@ -1,3 +1,4 @@
+package com.varsha.geoTag;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -23,13 +24,13 @@ import com.drew.metadata.Tag;
 @SuppressWarnings("deprecation")
 public class ReadMetaData {
 
-	public static JSONObject getGeoTag(URL u){
+	public static JSONObject getGeoTag(String strURL){
+		URL u = getURL(strURL);
 		InputStream in = getInputStream(u);
 		Metadata metadata;
-		System.out.println("inside geotag func :");
 		try {
 			metadata = ImageMetadataReader.readMetadata(in);
-			print(metadata);
+//			print(metadata);
 			/*
 			 conversion of coordinates into decimal 
 			 */
@@ -41,11 +42,9 @@ public class ReadMetaData {
 					if (tag.getTagName().contains("GPS")) {
 					}
 					if(tag.getTagName().equals("GPS Latitude")) {
-						System.out.println(tag.getDescription());
 						lat = tag.getDescription();
 					}
 					else if(tag.getTagName().equals("GPS Longitude")) {
-						System.out.println(tag.getDescription());
 						lon = tag.getDescription();
 					}
 				}
@@ -63,7 +62,6 @@ public class ReadMetaData {
 
 			corMap.put("Longitude", decLon);
 			corMap.put("Latitude", decLat);
-			System.out.println(corMap);
 
 			JSONObject ret = getLocationInfo(decLat,decLon);
 			return ret;
@@ -84,7 +82,7 @@ public class ReadMetaData {
 		Metadata metadata;
 		try {
 			metadata = ImageMetadataReader.readMetadata(in);
-			print(metadata);
+//			print(metadata);
 
 			/*
 			 conversion of coordinates into decimal 
